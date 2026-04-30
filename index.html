@@ -12,7 +12,7 @@
       background:linear-gradient(to bottom right,#0f172a,#581c87,#000);
       color:white;
       min-height:100vh;
-      padding:30px;
+      padding:20px;
     }
 
     .container{
@@ -23,6 +23,7 @@
       border-radius:25px;
       padding:25px;
       backdrop-filter:blur(10px);
+      box-shadow:0 0 25px rgba(0,0,0,0.5);
     }
 
     .header{
@@ -31,11 +32,13 @@
     }
 
     .header h1{
-      font-size:40px;
+      font-size:42px;
+      margin-bottom:10px;
     }
 
     .header p{
       color:#f9a8d4;
+      font-size:18px;
     }
 
     .grid{
@@ -48,6 +51,7 @@
       background:rgba(255,255,255,0.05);
       border-radius:20px;
       padding:20px;
+      border:1px solid rgba(255,255,255,0.08);
     }
 
     button{
@@ -55,15 +59,17 @@
       padding:12px;
       margin-top:10px;
       border:none;
-      border-radius:10px;
+      border-radius:12px;
       background:#7c3aed;
       color:white;
       cursor:pointer;
       font-size:16px;
+      transition:0.3s;
     }
 
     button:hover{
       background:#9333ea;
+      transform:scale(1.03);
     }
 
     #result{
@@ -71,6 +77,11 @@
       margin-top:20px;
       font-size:24px;
       font-weight:bold;
+    }
+
+    #nextBtn{
+      display:none;
+      margin-top:20px;
     }
 
     @media(max-width:900px){
@@ -92,59 +103,199 @@
 
   <div class="grid">
 
+    <!-- الأدلة -->
     <div class="box">
       <h2>🔎 Clues</h2>
-      <p>• Cameras were disabled</p>
-      <p>• A timer device was found</p>
-      <p>• Someone escaped toward the ship</p>
+      <div id="clues"></div>
     </div>
 
+    <!-- القضية -->
     <div class="box" style="text-align:center;">
-      <h2>🔥 Harbor Explosion</h2>
-      <p>A mysterious explosion happened at the harbor...</p>
+      <h2 id="title"></h2>
+      <p id="intro"></p>
 
       <h3>⏳ <span id="time">30</span>s</h3>
       <h3>⭐ <span id="score">0</span></h3>
+      <h3>📂 Case <span id="caseNum">1</span></h3>
     </div>
 
+    <!-- المشتبه بهم -->
     <div class="box">
       <h2>👤 Suspects</h2>
-
-      <button onclick="check(false)">Ship Captain</button>
-      <button onclick="check(true)">Systems Engineer</button>
-      <button onclick="check(false)">Harbor Guard</button>
+      <div id="suspects"></div>
     </div>
 
   </div>
 
   <div id="result"></div>
 
+  <button id="nextBtn" onclick="nextCase()">
+    Next Case ➡️
+  </button>
+
 </div>
 
 <script>
+
+const cases = [
+
+{
+  title:"🔥 Harbor Explosion",
+  intro:"A mysterious explosion happened at the harbor.",
+  clues:[
+    "Cameras were disabled",
+    "A timer device was found",
+    "Someone escaped toward the ship"
+  ],
+  suspects:[
+    {name:"Ship Captain", guilty:false},
+    {name:"Systems Engineer", guilty:true},
+    {name:"Harbor Guard", guilty:false}
+  ]
+},
+
+{
+  title:"⚔️ Kidnapping Downtown",
+  intro:"A child disappeared from a secured building.",
+  clues:[
+    "No broken doors",
+    "Security system disabled",
+    "Encrypted ransom message"
+  ],
+  suspects:[
+    {name:"Security Guard", guilty:true},
+    {name:"Driver", guilty:false},
+    {name:"Neighbor", guilty:false}
+  ]
+},
+
+{
+  title:"💰 Bank Robbery",
+  intro:"Millions disappeared from the city bank.",
+  clues:[
+    "Vault opened from inside",
+    "Fingerprint on control panel",
+    "Escape car found burned"
+  ],
+  suspects:[
+    {name:"Bank Manager", guilty:false},
+    {name:"IT Employee", guilty:true},
+    {name:"Cleaner", guilty:false}
+  ]
+},
+
+{
+  title:"🧬 Secret Laboratory",
+  intro:"A scientist vanished from a secret lab.",
+  clues:[
+    "Hidden files deleted",
+    "Lab cameras hacked",
+    "Unknown chemical traces"
+  ],
+  suspects:[
+    {name:"Researcher", guilty:true},
+    {name:"Assistant", guilty:false},
+    {name:"Guard", guilty:false}
+  ]
+}
+
+];
+
+let currentCase = 0;
 let score = 0;
 let time = 30;
+let timer;
 
-const timer = setInterval(() => {
-  time--;
+function loadCase(){
+
+  clearInterval(timer);
+
+  const c = cases[currentCase];
+
+  document.getElementById("title").innerText = c.title;
+  document.getElementById("intro").innerText = c.intro;
+  document.getElementById("caseNum").innerText = currentCase + 1;
+
+  const cluesDiv = document.getElementById("clues");
+  cluesDiv.innerHTML = "";
+
+  c.clues.forEach(clue=>{
+    cluesDiv.innerHTML += `<p>• ${clue}</p>`;
+  });
+
+  const suspectsDiv = document.getElementById("suspects");
+  suspectsDiv.innerHTML = "";
+
+  c.suspects.forEach(s=>{
+    suspectsDiv.innerHTML += `
+      <button onclick="checkAnswer(${s.guilty})">
+        ${s.name}
+      </button>
+    `;
+  });
+
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("nextBtn").style.display = "none";
+
+  time = 30;
   document.getElementById("time").innerText = time;
 
-  if(time <= 0){
-    clearInterval(timer);
-    document.getElementById("result").innerHTML = "⏰ Time Over!";
-  }
-},1000);
+  timer = setInterval(()=>{
+    time--;
+    document.getElementById("time").innerText = time;
 
-function check(correct){
+    if(time <= 0){
+      clearInterval(timer);
+      document.getElementById("result").innerHTML = "⏰ Time Over!";
+      document.getElementById("nextBtn").style.display = "block";
+    }
+
+  },1000);
+
+}
+
+function checkAnswer(correct){
+
+  clearInterval(timer);
+
   if(correct){
     score++;
     document.getElementById("score").innerText = score;
-    document.getElementById("result").innerHTML = "✔️ Case Solved!";
-  }else{
-    document.getElementById("result").innerHTML = "❌ Wrong Suspect!";
+
+    document.getElementById("result").innerHTML =
+      "✔️ Case Solved!";
   }
+  else{
+    document.getElementById("result").innerHTML =
+      "❌ Wrong Suspect!";
+  }
+
+  document.getElementById("nextBtn").style.display = "block";
 }
+
+function nextCase(){
+
+  currentCase++;
+
+  if(currentCase >= cases.length){
+
+    document.querySelector(".container").innerHTML = `
+      <div style="text-align:center;padding:50px;">
+        <h1>🏆 All Cases Solved</h1>
+        <h2>Final Score: ${score}</h2>
+        <p>Great Job Detective Shahd 🔥</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  loadCase();
+}
+
+loadCase();
+
 </script>
 
 </body>
-  </html>
+</html>
