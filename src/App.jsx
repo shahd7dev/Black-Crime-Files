@@ -1,165 +1,154 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
-// 🕵️‍♀️🔥 Detective Game - Shahd Abu Nofal Edition
+
+  import { useState, useEffect } from "react";
+
 const cases = [
   {
     title: "🔥 انفجار الميناء الغامض",
-    intro: "حدث انفجار ضخم في الميناء أثناء الليل... القضية بين يديك الآن.",
-    atmosphere: "🚨 الشرطة تطوّق المنطقة - أضواء حمراء وزرقاء تملأ المكان",
+    intro: "حدث انفجار ضخم في الميناء أثناء الليل...",
     clues: [
-      "تم تعطيل الكاميرات قبل الحادث",
+      "تم تعطيل الكاميرات",
       "تم العثور على جهاز توقيت",
-      "شخص شوهد يهرب نحو السفينة",
+      "شخص هرب نحو السفينة",
     ],
     suspects: [
-      { name: "قائد السفينة", guilty: false, hint: "كان في عرض البحر وقت الحادث" },
-      { name: "مهندس الأنظمة", guilty: true, hint: "خبير في التحكم والبرمجة المتفجرة" },
-      { name: "حارس الميناء", guilty: false, hint: "أصيب أثناء الانفجار" },
-    ],
-  },
-  {
-    title: "⚔️ اختطاف داخل المدينة",
-    intro: "طفل مفقود من منطقة محصنة بالكامل بدون أي أثر اقتحام.",
-    atmosphere: "🚔 المدينة مغلقة - فرق التحقيق في كل زاوية",
-    clues: [
-      "لا يوجد كسر في الأبواب",
-      "تعطيل كامل لنظام الإنذار",
-      "رسالة فدية مشفّرة وصلت",
-    ],
-    suspects: [
-      { name: "حارس الأمن", guilty: true, hint: "يمتلك صلاحيات النظام بالكامل" },
-      { name: "السائق", guilty: false, hint: "كان خارج المدينة" },
-      { name: "جار المبنى", guilty: false, hint: "لا علاقة له بالحادث" },
+      { name: "قائد السفينة", guilty: false },
+      { name: "مهندس الأنظمة", guilty: true },
+      { name: "حارس الميناء", guilty: false },
     ],
   },
 ];
 
-export default function ShahdDetectiveGame() {
-  const [scene, setScene] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [result, setResult] = useState(null);
+export default function App() {
   const [score, setScore] = useState(0);
   const [time, setTime] = useState(30);
+  const [result, setResult] = useState("");
 
-  const current = cases[scene];
+  const current = cases[0];
 
   useEffect(() => {
-    if (result) return;
-    if (time === 0) {
-      setResult("fail");
+    if (time <= 0) {
+      setResult("⏰ انتهى الوقت!");
       return;
     }
-    const t = setTimeout(() => setTime(time - 1), 1000);
-    return () => clearTimeout(t);
-  }, [time, result]);
 
-  const check = (s) => {
-    setSelected(s.name);
+    const timer = setTimeout(() => {
+      setTime(time - 1);
+    }, 1000);
 
-    if (s.guilty) {
-      setResult("win");
-      setScore((prev) => prev + 1);
+    return () => clearTimeout(timer);
+  }, [time]);
+
+  const checkAnswer = (suspect) => {
+    if (suspect.guilty) {
+      setResult("✔️ تم حل القضية!");
+      setScore(score + 1);
     } else {
-      setResult("fail");
+      setResult("❌ الشخص الخطأ!");
     }
-  };
-
-  const next = () => {
-    setScene((s) => (s + 1) % cases.length);
-    setSelected(null);
-    setResult(null);
-    setTime(30);
-  };
-
-  const restart = () => {
-    setScene(0);
-    setSelected(null);
-    setResult(null);
-    setScore(0);
-    setTime(30);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-black p-6">
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom right, #111827, #581c87, #000)",
+        color: "white",
+        padding: "30px",
+        fontFamily: "sans-serif",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "900px",
+          margin: "auto",
+          borderRadius: "25px",
+          padding: "25px",
+          background: "rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <h1 style={{ textAlign: "center", fontSize: "35px" }}>
+          🕵️ Black Crime Files
+        </h1>
 
-      <div className="w-full max-w-6xl p-2 rounded-[30px] bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 shadow-2xl">
+        <p style={{ textAlign: "center", color: "#f9a8d4" }}>
+          Shahd Abu Nofal
+        </p>
 
-        <Card className="rounded-[25px] bg-black/70 text-white backdrop-blur-xl border border-white/10">
-          <CardContent className="p-6">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: "20px",
+            marginTop: "30px",
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              padding: "20px",
+              borderRadius: "15px",
+            }}
+          >
+            <h2>🔎 الأدلة</h2>
 
-            {/* الهيدر */}
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold">🕵️‍♀️ لعبة التحقيق الاحترافية</h1>
-              <p className="text-pink-300 font-semibold">Shahd Abu Nofal</p>
-              <p className="text-sm text-gray-400">🎮 Detective Action Story Game</p>
-            </div>
+            {current.clues.map((clue, index) => (
+              <p key={index}>• {clue}</p>
+            ))}
+          </div>
 
-            {/* الساحة */}
-            <div className="grid grid-cols-3 gap-4">
+          <div
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              padding: "20px",
+              borderRadius: "15px",
+              textAlign: "center",
+            }}
+          >
+            <h2>{current.title}</h2>
+            <p>{current.intro}</p>
 
-              {/* الأدلة */}
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                <h2 className="font-bold mb-2">🔎 الأدلة</h2>
-                <ul className="list-disc ml-4 text-sm text-gray-300">
-                  {current.clues.map((c, i) => (
-                    <li key={i}>{c}</li>
-                  ))}
-                </ul>
-              </div>
+            <h3>⏳ {time}s</h3>
+            <h3>⭐ {score}</h3>
+          </div>
 
-              {/* المشهد */}
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-center">
-                <h2 className="text-lg font-bold mb-2">{current.title}</h2>
-                <p className="text-sm text-gray-300 mb-2">{current.intro}</p>
-                <p className="text-red-300 italic mb-4">{current.atmosphere}</p>
+          <div
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              padding: "20px",
+              borderRadius: "15px",
+            }}
+          >
+            <h2>👤 المشتبه بهم</h2>
 
-                <div className="text-xl mb-2">⏳ {time}s</div>
-                <div className="text-yellow-300">⭐ {score}</div>
-              </div>
+            {current.suspects.map((suspect, index) => (
+              <button
+                key={index}
+                onClick={() => checkAnswer(suspect)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  marginTop: "10px",
+                  borderRadius: "10px",
+                  border: "none",
+                  background: "#7c3aed",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                {suspect.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {/* المشتبه بهم */}
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                <h2 className="font-bold mb-2">👤 المشتبه بهم</h2>
-
-                <div className="flex flex-col gap-2">
-                  {current.suspects.map((s, i) => (
-                    <Button key={i} onClick={() => check(s)} disabled={!!result}>
-                      {s.name}
-                    </Button>
-                  ))}
-                </div>
-
-                {selected && (
-                  <p className="mt-3 text-xs text-yellow-300">
-                    💡 {current.suspects.find((s) => s.name === selected)?.hint}
-                  </p>
-                )}
-              </div>
-
-            </div>
-
-            {/* النتائج */}
-            {result && (
-              <div className="text-center mt-6">
-                {result === "win" ? (
-                  <p className="text-green-400 font-bold text-lg">✔️ تم حل القضية!</p>
-                ) : (
-                  <p className="text-red-400 font-bold text-lg">❌ فشلت المهمة!</p>
-                )}
-
-                <div className="flex gap-2 justify-center mt-3">
-                  <Button onClick={next}>القضية التالية ➡️</Button>
-                  <Button onClick={restart} variant="secondary">إعادة اللعبة 🔁</Button>
-                </div>
-              </div>
-            )}
-
-          </CardContent>
-        </Card>
-
+        {result && (
+          <h2 style={{ textAlign: "center", marginTop: "25px" }}>
+            {result}
+          </h2>
+        )}
       </div>
     </div>
   );
-}
+    }
