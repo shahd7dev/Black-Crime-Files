@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Black Crime Files</title>
 
@@ -135,7 +136,7 @@
 
   </div>
 
-  <!-- اللعبة -->
+  <!-- شاشة اللعبة -->
 
   <div id="gameScreen" style="display:none;">
 
@@ -320,6 +321,7 @@ const cases = [
 
 let currentCase = 0;
 let score = 0;
+let wrongAnswers = 0;
 let time = 30;
 let timer;
 
@@ -386,6 +388,8 @@ function loadCase(){
 
       clearInterval(timer);
 
+      wrongAnswers++;
+
       document.getElementById("result").innerHTML =
         "⏰ Time Over!";
 
@@ -399,9 +403,11 @@ function loadCase(){
 
 function checkAnswer(correct){
 
-  if(correct){
+  clearInterval(timer);
 
-    clearInterval(timer);
+  // إذا صحيحة
+
+  if(correct){
 
     score++;
 
@@ -409,24 +415,30 @@ function checkAnswer(correct){
       score;
 
     document.getElementById("result").innerHTML =
-      "✔️ Case Solved!";
+      "✔️ Correct! Case Solved.";
 
-    document.getElementById("nextBtn").style.display =
-      "block";
   }
+
+  // إذا خاطئة
 
   else{
 
+    wrongAnswers++;
+
     document.getElementById("result").innerHTML =
-      "❌ Wrong Suspect! Try Again.";
+      "❌ Wrong Choice! The criminal escaped.";
 
   }
 
+  document.getElementById("nextBtn").style.display =
+    "block";
 }
 
 function nextCase(){
 
   currentCase++;
+
+  // نهاية اللعبة
 
   if(currentCase >= cases.length){
 
@@ -435,7 +447,7 @@ function nextCase(){
     if(score === 5){
 
       message =
-        "🏆 Perfect Detective! You solved all cases.";
+        "🏆 Perfect Detective! You solved every case.";
 
     }
 
@@ -449,14 +461,21 @@ function nextCase(){
     else if(score === 3){
 
       message =
-        "🕵️ Good job! But some criminals escaped.";
+        "🕵️ Good job! Some criminals escaped.";
+
+    }
+
+    else if(score === 2){
+
+      message =
+        "⚠️ You solved a few cases, but many failed.";
 
     }
 
     else{
 
       message =
-        "❌ Mission Failed. Try again.";
+        "❌ Mission Failed. Better luck next time.";
 
     }
 
@@ -466,7 +485,7 @@ function nextCase(){
 
         <h1>🎮 Game Finished</h1>
 
-        <h2>${player}'s Score</h2>
+        <h2>${player}'s Final Results</h2>
 
         <h1 style="
           font-size:70px;
@@ -474,6 +493,14 @@ function nextCase(){
         ">
           ${score}/5
         </h1>
+
+        <p style="
+          font-size:22px;
+          margin-top:20px;
+          color:#f87171;
+        ">
+          Wrong Answers: ${wrongAnswers}
+        </p>
 
         <p style="
           font-size:24px;
