@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>Black Crime Files</title>
 
   <style>
+
     body{
       margin:0;
+      padding:20px;
       font-family:Arial;
       background:linear-gradient(to bottom right,#0f172a,#581c87,#000);
       color:white;
       min-height:100vh;
-      padding:20px;
     }
 
     .container{
@@ -23,7 +26,7 @@
       border-radius:25px;
       padding:25px;
       backdrop-filter:blur(10px);
-      box-shadow:0 0 25px rgba(0,0,0,0.5);
+      box-shadow:0 0 30px rgba(0,0,0,0.5);
     }
 
     .header{
@@ -39,6 +42,21 @@
     .header p{
       color:#f9a8d4;
       font-size:18px;
+    }
+
+    .start-screen{
+      text-align:center;
+      padding:60px 20px;
+    }
+
+    .start-screen input{
+      width:300px;
+      max-width:90%;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      margin-top:20px;
+      font-size:16px;
     }
 
     .grid{
@@ -85,10 +103,13 @@
     }
 
     @media(max-width:900px){
+
       .grid{
         grid-template-columns:1fr;
       }
+
     }
+
   </style>
 </head>
 
@@ -96,57 +117,126 @@
 
 <div class="container">
 
-  <div class="header">
+  <!-- شاشة البداية -->
+
+  <div id="startScreen" class="start-screen">
+
     <h1>🕵️ Black Crime Files</h1>
-    <p>Shahd Abu Nofal</p>
-  </div>
 
-  <div class="grid">
+    <p>Enter Your Detective Name</p>
 
-    <!-- الأدلة -->
-    <div class="box">
-      <h2>🔎 Clues</h2>
-      <div id="clues"></div>
-    </div>
+    <input type="text" id="playerName" placeholder="Your Name">
 
-    <!-- القضية -->
-    <div class="box" style="text-align:center;">
-      <h2 id="title"></h2>
-      <p id="intro"></p>
+    <br>
 
-      <h3>⏳ <span id="time">30</span>s</h3>
-      <h3>⭐ <span id="score">0</span></h3>
-      <h3>📂 Case <span id="caseNum">1</span></h3>
-    </div>
-
-    <!-- المشتبه بهم -->
-    <div class="box">
-      <h2>👤 Suspects</h2>
-      <div id="suspects"></div>
-    </div>
+    <button onclick="startGame()" style="width:300px;max-width:90%;">
+      Start Game 🎮
+    </button>
 
   </div>
 
-  <div id="result"></div>
+  <!-- اللعبة -->
 
-  <button id="nextBtn" onclick="nextCase()">
-    Next Case ➡️
-  </button>
+  <div id="gameScreen" style="display:none;">
+
+    <div class="header">
+
+      <h1>🕵️ Black Crime Files</h1>
+
+      <p id="welcome"></p>
+
+    </div>
+
+    <div class="grid">
+
+      <!-- الأدلة -->
+
+      <div class="box">
+
+        <h2>🔎 Clues</h2>
+
+        <div id="clues"></div>
+
+      </div>
+
+      <!-- القضية -->
+
+      <div class="box" style="text-align:center;">
+
+        <h2 id="title"></h2>
+
+        <p id="intro"></p>
+
+        <h3>⏳ <span id="time">30</span>s</h3>
+
+        <h3>⭐ Score: <span id="score">0</span></h3>
+
+        <h3>📂 Case <span id="caseNum">1</span>/5</h3>
+
+      </div>
+
+      <!-- المشتبه بهم -->
+
+      <div class="box">
+
+        <h2>👤 Suspects</h2>
+
+        <div id="suspects"></div>
+
+      </div>
+
+    </div>
+
+    <div id="result"></div>
+
+    <button id="nextBtn" onclick="nextCase()">
+      Next Case ➡️
+    </button>
+
+  </div>
 
 </div>
 
 <script>
 
+let player = "";
+
+function startGame(){
+
+  player = document.getElementById("playerName").value;
+
+  if(player.trim() === ""){
+
+    alert("Please enter your name");
+
+    return;
+  }
+
+  document.getElementById("startScreen").style.display =
+    "none";
+
+  document.getElementById("gameScreen").style.display =
+    "block";
+
+  document.getElementById("welcome").innerHTML =
+    `Welcome Detective ${player} 🔥`;
+
+  loadCase();
+}
+
 const cases = [
 
 {
   title:"🔥 Harbor Explosion",
+
   intro:"A mysterious explosion happened at the harbor.",
+
   clues:[
     "Cameras were disabled",
     "A timer device was found",
     "Someone escaped toward the ship"
   ],
+
   suspects:[
     {name:"Ship Captain", guilty:false},
     {name:"Systems Engineer", guilty:true},
@@ -156,12 +246,15 @@ const cases = [
 
 {
   title:"⚔️ Kidnapping Downtown",
+
   intro:"A child disappeared from a secured building.",
+
   clues:[
     "No broken doors",
     "Security system disabled",
     "Encrypted ransom message"
   ],
+
   suspects:[
     {name:"Security Guard", guilty:true},
     {name:"Driver", guilty:false},
@@ -171,12 +264,15 @@ const cases = [
 
 {
   title:"💰 Bank Robbery",
+
   intro:"Millions disappeared from the city bank.",
+
   clues:[
     "Vault opened from inside",
     "Fingerprint on control panel",
     "Escape car found burned"
   ],
+
   suspects:[
     {name:"Bank Manager", guilty:false},
     {name:"IT Employee", guilty:true},
@@ -186,16 +282,37 @@ const cases = [
 
 {
   title:"🧬 Secret Laboratory",
+
   intro:"A scientist vanished from a secret lab.",
+
   clues:[
     "Hidden files deleted",
     "Lab cameras hacked",
     "Unknown chemical traces"
   ],
+
   suspects:[
     {name:"Researcher", guilty:true},
     {name:"Assistant", guilty:false},
     {name:"Guard", guilty:false}
+  ]
+},
+
+{
+  title:"🚔 Serial Killer Case",
+
+  intro:"A dangerous serial killer left another clue.",
+
+  clues:[
+    "A bloody glove was found",
+    "Victim received threats",
+    "Suspicious car near the scene"
+  ],
+
+  suspects:[
+    {name:"Taxi Driver", guilty:false},
+    {name:"Ex-Friend", guilty:true},
+    {name:"Store Owner", guilty:false}
   ]
 }
 
@@ -212,42 +329,68 @@ function loadCase(){
 
   const c = cases[currentCase];
 
-  document.getElementById("title").innerText = c.title;
-  document.getElementById("intro").innerText = c.intro;
-  document.getElementById("caseNum").innerText = currentCase + 1;
+  document.getElementById("title").innerText =
+    c.title;
 
-  const cluesDiv = document.getElementById("clues");
+  document.getElementById("intro").innerText =
+    c.intro;
+
+  document.getElementById("caseNum").innerText =
+    currentCase + 1;
+
+  const cluesDiv =
+    document.getElementById("clues");
+
   cluesDiv.innerHTML = "";
 
   c.clues.forEach(clue=>{
+
     cluesDiv.innerHTML += `<p>• ${clue}</p>`;
+
   });
 
-  const suspectsDiv = document.getElementById("suspects");
+  const suspectsDiv =
+    document.getElementById("suspects");
+
   suspectsDiv.innerHTML = "";
 
   c.suspects.forEach(s=>{
+
     suspectsDiv.innerHTML += `
       <button onclick="checkAnswer(${s.guilty})">
         ${s.name}
       </button>
     `;
+
   });
 
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("result").innerHTML =
+    "";
+
+  document.getElementById("nextBtn").style.display =
+    "none";
 
   time = 30;
-  document.getElementById("time").innerText = time;
+
+  document.getElementById("time").innerText =
+    time;
 
   timer = setInterval(()=>{
+
     time--;
-    document.getElementById("time").innerText = time;
+
+    document.getElementById("time").innerText =
+      time;
 
     if(time <= 0){
+
       clearInterval(timer);
-      document.getElementById("result").innerHTML = "⏰ Time Over!";
-      document.getElementById("nextBtn").style.display = "block";
+
+      document.getElementById("result").innerHTML =
+        "⏰ Time Over!";
+
+      document.getElementById("nextBtn").style.display =
+        "block";
     }
 
   },1000);
@@ -256,21 +399,29 @@ function loadCase(){
 
 function checkAnswer(correct){
 
-  clearInterval(timer);
-
   if(correct){
+
+    clearInterval(timer);
+
     score++;
-    document.getElementById("score").innerText = score;
+
+    document.getElementById("score").innerText =
+      score;
 
     document.getElementById("result").innerHTML =
       "✔️ Case Solved!";
-  }
-  else{
-    document.getElementById("result").innerHTML =
-      "❌ Wrong Suspect!";
+
+    document.getElementById("nextBtn").style.display =
+      "block";
   }
 
-  document.getElementById("nextBtn").style.display = "block";
+  else{
+
+    document.getElementById("result").innerHTML =
+      "❌ Wrong Suspect! Try Again.";
+
+  }
+
 }
 
 function nextCase(){
@@ -279,21 +430,69 @@ function nextCase(){
 
   if(currentCase >= cases.length){
 
+    let message = "";
+
+    if(score === 5){
+
+      message =
+        "🏆 Perfect Detective! You solved all cases.";
+
+    }
+
+    else if(score === 4){
+
+      message =
+        "🔥 Amazing work detective.";
+
+    }
+
+    else if(score === 3){
+
+      message =
+        "🕵️ Good job! But some criminals escaped.";
+
+    }
+
+    else{
+
+      message =
+        "❌ Mission Failed. Try again.";
+
+    }
+
     document.querySelector(".container").innerHTML = `
+
       <div style="text-align:center;padding:50px;">
-        <h1>🏆 All Cases Solved</h1>
-        <h2>Final Score: ${score}</h2>
-        <p>Great Job Detective Shahd 🔥</p>
+
+        <h1>🎮 Game Finished</h1>
+
+        <h2>${player}'s Score</h2>
+
+        <h1 style="
+          font-size:70px;
+          color:#facc15;
+        ">
+          ${score}/5
+        </h1>
+
+        <p style="
+          font-size:24px;
+          margin-top:20px;
+          color:#f9a8d4;
+        ">
+          ${message}
+        </p>
+
       </div>
+
     `;
 
     return;
   }
 
   loadCase();
-}
 
-loadCase();
+}
 
 </script>
 
