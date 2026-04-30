@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Black Crime Files</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(to bottom right,#0f172a,#581c87,#000);
+      color:white;
+      min-height:100vh;
+      padding:30px;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:25px;
+      padding:25px;
+      backdrop-filter:blur(10px);
+    }
+
+    .header{
+      text-align:center;
+      margin-bottom:30px;
+    }
+
+    .header h1{
+      font-size:40px;
+    }
+
+    .header p{
+      color:#f9a8d4;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:20px;
+    }
+
+    .box{
+      background:rgba(255,255,255,0.05);
+      border-radius:20px;
+      padding:20px;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border:none;
+      border-radius:10px;
+      background:#7c3aed;
+      color:white;
+      cursor:pointer;
+      font-size:16px;
+    }
+
+    button:hover{
+      background:#9333ea;
+    }
+
+    #result{
+      text-align:center;
+      margin-top:20px;
+      font-size:24px;
+      font-weight:bold;
+    }
+
+    @media(max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>🕵️ Black Crime Files</h1>
+    <p>Shahd Abu Nofal</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="box">
+      <h2>🔎 Clues</h2>
+      <p>• Cameras were disabled</p>
+      <p>• A timer device was found</p>
+      <p>• Someone escaped toward the ship</p>
+    </div>
+
+    <div class="box" style="text-align:center;">
+      <h2>🔥 Harbor Explosion</h2>
+      <p>A mysterious explosion happened at the harbor...</p>
+
+      <h3>⏳ <span id="time">30</span>s</h3>
+      <h3>⭐ <span id="score">0</span></h3>
+    </div>
+
+    <div class="box">
+      <h2>👤 Suspects</h2>
+
+      <button onclick="check(false)">Ship Captain</button>
+      <button onclick="check(true)">Systems Engineer</button>
+      <button onclick="check(false)">Harbor Guard</button>
+    </div>
+
+  </div>
+
+  <div id="result"></div>
+
+</div>
+
+<script>
+let score = 0;
+let time = 30;
+
+const timer = setInterval(() => {
+  time--;
+  document.getElementById("time").innerText = time;
+
+  if(time <= 0){
+    clearInterval(timer);
+    document.getElementById("result").innerHTML = "⏰ Time Over!";
+  }
+},1000);
+
+function check(correct){
+  if(correct){
+    score++;
+    document.getElementById("score").innerText = score;
+    document.getElementById("result").innerHTML = "✔️ Case Solved!";
+  }else{
+    document.getElementById("result").innerHTML = "❌ Wrong Suspect!";
+  }
+}
+</script>
+
+</body>
+  </html>
